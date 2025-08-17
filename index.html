@@ -10,7 +10,7 @@
   body, html { margin: 0; padding: 0; overflow: hidden; height: 100%; background: black; }
   canvas { position: absolute; top: 0; left: 0; z-index: 3; width: 100vw; height: 100vh; }
   .carousel-row { 
-    width: 110px; max-width: 25vw; height: auto; overflow: hidden; margin-bottom: 15px;
+    width: 80px; max-width: 25vw; height: auto; overflow: hidden; margin-bottom: 15px;
   }
   .carousel-inner { position: relative; }
   .carousel-inner img { width: 100%; height: auto; object-fit: cover; display: block; margin-bottom: 5px; }
@@ -19,7 +19,7 @@
     background: rgba(255,255,255,0.7); border: none; padding: 10px 15px;
     border-radius: 10px; font-size: 18px; cursor: pointer; display: none; 
   }
-  /* Окно предупреждения */
+  /* Стартовый экран */
   #start-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.9); color: white; display: flex; flex-direction: column;
@@ -34,19 +34,19 @@
 
   /* Комплименты */
   .compliment {
-    position: absolute; white-space: nowrap; font-size: 22px; color: #ffb6c1;
+    position: absolute; white-space: nowrap; font-size: 10px; color: #ffb6c1;
     animation: moveRight 20s linear infinite;
     text-shadow: 0 0 10px rgba(255,100,150,0.8);
     font-weight: bold;
   }
   @keyframes moveRight {
     from { transform: translateX(-10%); }
-    to   { transform: translateX(50vw); }
+    to   { transform: translateX(150vw); }
   }
 </style>
 </head>
 <body>
-<!-- Предупреждение -->
+<!-- Стартовый экран -->
 <div id="start-screen">
   <h2>🎶 Включи звук для лучшего эффекта 💖</h2>
   <button id="start-btn">Начать</button>
@@ -72,58 +72,27 @@ canvas.height = window.innerHeight;
 const toggle = document.getElementById("music-toggle");
 const music = document.getElementById("bg-music");
 
+// --- Комплименты ---
 const compliments = [
-  "Ты самая красивая 🌸",
-  "Улыбка у тебя волшебная ✨",
-  "Ты моё вдохновение 💕",
-  "С тобой тепло даже в холод ❄️❤️",
-  "Ты лучшее, что со мной случилось 🌹",
-  "Твои глаза сияют ярче звезд ✨",
-  "С тобой каждый день как праздник 🎉",
-  "Ты даришь радость окружающим 🌈",
-  "Твой смех — музыка для души 🎶",
-  "Ты невероятно умная 🧠",
-  "Ты словно солнечный луч 🌞",
-  "С тобой легко и приятно 🌷",
-  "Ты настоящая жемчужина 💎",
-  "Твоя энергия заряжает ⚡",
-  "Ты уникальна во всем 💖",
-  "Твоя доброта безгранична 🌸",
-  "Ты заставляешь сердце биться чаще ❤️",
-  "С тобой мир ярче 🌟",
-  "Ты как магия ✨",
-  "Твоя искренность трогает душу 💕",
-  "Ты волшебство в реальной жизни 🧚",
-  "Твои слова согревают ❄️❤️",
-  "Ты как весенний ветер 🌼",
-  "С тобой легко мечтать 🌈",
-  "Ты вдохновляешь на лучшее 🌹",
-  "Твоя улыбка освещает всё вокруг 🌟",
-  "Ты как любимая песня 🎵",
-  "С тобой хочется смеяться 😂",
-  "Ты невероятно обаятельна 💖",
-  "Твой стиль всегда безупречен 👗",
-  "Ты словно картинка из мечты 🖼️",
-  "С тобой чувствуешь себя дома 🏡",
-  "Ты очаровательна в мелочах 🌸",
-  "Твоя нежность завораживает 💕",
-  "Ты словно чудо 🌟",
-  "С тобой хочется творить 🎨",
-  "Ты заставляешь верить в чудеса ✨",
-  "Твоя красота внутренне и внешне 💖",
-  "Ты как летний дождь — свежа и прекрасна 🌦️",
-  "Твоя улыбка как утреннее солнце 🌞",
-  "С тобой легко и спокойно 🌷",
-  "Ты излучаешь тепло ❤️",
-  "Ты вдохновляешь быть лучше 💪",
-  "С тобой каждый момент бесценен ⏳",
-  "Ты как редкий цветок 🌹",
-  "Твои глаза отражают мир 🌌",
-  "Ты словно волшебная сказка 📖",
-  "С тобой всё кажется возможным 🌈",
-  "Ты делаешь мир ярче 🌟",
-  "Твоя душа красива 💕",
-  "Ты особенная 🌸",
+  "Ты самая красивая 🌸","Улыбка у тебя волшебная ✨","Ты моё вдохновение 💕",
+  "С тобой тепло даже в холод ❄️❤️","Ты лучшее, что со мной случилось 🌹",
+  "Твои глаза сияют ярче звезд ✨","С тобой каждый день как праздник 🎉",
+  "Ты даришь радость окружающим 🌈","Твой смех — музыка для души 🎶",
+  "Ты невероятно умная 🧠","Ты словно солнечный луч 🌞","С тобой легко и приятно 🌷",
+  "Ты настоящая жемчужина 💎","Твоя энергия заряжает ⚡","Ты уникальна во всем 💖",
+  "Твоя доброта безгранична 🌸","Ты заставляешь сердце биться чаще ❤️",
+  "С тобой мир ярче 🌟","Ты как магия ✨","Твоя искренность трогает душу 💕",
+  "Ты волшебство в реальной жизни 🧚","Твои слова согревают ❄️❤️",
+  "Ты как весенний ветер 🌼","С тобой легко мечтать 🌈","Ты вдохновляешь на лучшее 🌹",
+  "Твоя улыбка освещает всё вокруг 🌟","Ты как любимая песня 🎵","С тобой хочется смеяться 😂",
+  "Ты невероятно обаятельна 💖","Твой стиль всегда безупречен 👗","Ты словно картинка из мечты 🖼️",
+  "С тобой чувствуешь себя дома 🏡","Ты очаровательна в мелочах 🌸","Твоя нежность завораживает 💕",
+  "Ты словно чудо 🌟","С тобой хочется творить 🎨","Ты заставляешь верить в чудеса ✨",
+  "Твоя красота внутренне и внешне 💖","Ты как летний дождь — свежа и прекрасна 🌦️",
+  "Твоя улыбка как утреннее солнце 🌞","С тобой легко и спокойно 🌷","Ты излучаешь тепло ❤️",
+  "Ты вдохновляешь быть лучше 💪","С тобой каждый момент бесценен ⏳","Ты как редкий цветок 🌹",
+  "Твои глаза отражают мир 🌌","Ты словно волшебная сказка 📖","С тобой всё кажется возможным 🌈",
+  "Ты делаешь мир ярче 🌟","Твоя душа красива 💕","Ты особенная 🌸",
   "С тобой хочется быть рядом всегда ❤️"
 ];
 function spawnCompliment(){
@@ -135,30 +104,28 @@ function spawnCompliment(){
   document.body.appendChild(div);
   setTimeout(()=>div.remove(), 25000);
 }
-setInterval(spawnCompliment, 5000); // каждые 5 секунд новый
+setInterval(spawnCompliment, 5000);
 
 // --- Слайд-шоу ---
 const PHOTOS = [];
-for(let i=1;i<=20;i++){
-  PHOTOS.push(`https://raw.githubusercontent.com/RuslanFlash/DashaProject/main/img/${i}.jpg`);
-}
-let started = false;
-let particleFactor = 15;
+for(let i=1;i<=20;i++) PHOTOS.push(`https://raw.githubusercontent.com/RuslanFlash/DashaProject/main/img/${i}.jpg`);
 
+let started=false;
 const containers = [
   document.getElementById("carousel-container-left"),
   document.getElementById("carousel-container-right")
 ];
 containers.forEach(c=>c.style.display='none');
 
-let rows = [];
+let rows=[];
 containers.forEach(container=>{
   for(let i=0;i<3;i++){
     let row = document.createElement('div');
     row.className='carousel-row';
     let inner = document.createElement('div');
     inner.className='carousel-inner';
-    PHOTOS.forEach(url=>{
+    // Дублируем фото для бесконечной прокрутки
+    PHOTOS.concat(PHOTOS).forEach(url=>{
       let img = document.createElement('img');
       img.src = url;
       inner.appendChild(img);
@@ -185,65 +152,55 @@ let pointerX=0, pointerY=0;
 
 class Particle {
   constructor(target){
-    this.startX = Math.random()*canvas.width;
-    this.startY = Math.random()*canvas.height;
-    this.x = this.startX;
-    this.y = this.startY;
-    this.tx = target.x;
-    this.ty = target.y;
-    this.vx = (Math.random()-0.5)*2;
-    this.vy = (Math.random()-0.5)*2;
-    this.isExploding = false;
+    this.startX=Math.random()*canvas.width;
+    this.startY=Math.random()*canvas.height;
+    this.x=this.startX;
+    this.y=this.startY;
+    this.tx=target.x;
+    this.ty=target.y;
+    this.vx=(Math.random()-0.5)*2;
+    this.vy=(Math.random()-0.5)*2;
+    this.isExploding=false;
   }
   update(){
-    if(this.isExploding){
-      this.updateAroundPoint(pointerX, pointerY);
-    } else if(started){
-      this.x += (this.tx - this.x)*0.06 + (Math.random()-0.5)*1;
-      this.y += (this.ty - this.y)*0.06 + (Math.random()-0.5)*1;
+    if(this.isExploding){ this.updateAroundPoint(pointerX, pointerY); }
+    else if(started){
+      this.x+=(this.tx-this.x)*0.06+(Math.random()-0.5)*1;
+      this.y+=(this.ty-this.y)*0.06+(Math.random()-0.5)*1;
     } else {
-      this.x += this.vx;
-      this.y += this.vy;
+      this.x+=this.vx; this.y+=this.vy;
       if(this.x<0||this.x>canvas.width) this.vx*=-1;
       if(this.y<0||this.y>canvas.height) this.vy*=-1;
     }
   }
   updateAroundPoint(px, py){
-    let dx = this.x - px;
-    let dy = this.y - py;
-    let dist = Math.sqrt(dx*dx + dy*dy);
-    let radius = 100;
-    if(dist < radius){
-      let factor = 0.05;
-      let maxSpeed = 3;
-      this.vx += -dx*factor + (Math.random()-0.5);
-      this.vy += -dy*factor + (Math.random()-0.5);
-      this.vx = Math.max(-maxSpeed, Math.min(maxSpeed, this.vx));
-      this.vy = Math.max(-maxSpeed, Math.min(maxSpeed, this.vy));
+    let dx=this.x-px, dy=this.y-py, dist=Math.sqrt(dx*dx+dy*dy), radius=100;
+    if(dist<radius){
+      let factor=0.05, maxSpeed=3;
+      this.vx+=-dx*factor+(Math.random()-0.5);
+      this.vy+=-dy*factor+(Math.random()-0.5);
+      this.vx=Math.max(-maxSpeed,Math.min(maxSpeed,this.vx));
+      this.vy=Math.max(-maxSpeed,Math.min(maxSpeed,this.vy));
     }
-    this.x += this.vx; this.y += this.vy;
+    this.x+=this.vx; this.y+=this.vy;
     if(this.x<0||this.x>canvas.width) this.vx*=-1;
     if(this.y<0||this.y>canvas.height) this.vy*=-1;
   }
-  draw(){
-    drawHeart(this.x, this.y, 4, currentHeartColor);
-  }
+  draw(){ drawHeart(this.x,this.y,4,currentHeartColor); }
 }
 
-// Точки
-function generateTextPoints(text, cx, cy){
+// Точки текста и сердца
+function generateTextPoints(text,cx,cy){
   let c=document.createElement('canvas'), ctx2=c.getContext('2d');
-  c.width=900;c.height=200;
+  c.width=900; c.height=200;
   ctx2.font='bold 80px Arial'; ctx2.fillStyle='white'; ctx2.fillText(text,0,150);
-  let data = ctx2.getImageData(0,0,c.width,c.height).data, pts=[];
-  for(let y=0;y<c.height;y+=5){ 
-    for(let x=0;x<c.width;x+=5){ 
+  let data=ctx2.getImageData(0,0,c.width,c.height).data, pts=[];
+  for(let y=0;y<c.height;y+=5)
+    for(let x=0;x<c.width;x+=5)
       if(data[(y*c.width+x)*4+3]>128) pts.push({x:x+canvas.width/2-150,y:y+canvas.height/2-100});
-    }
-  }
   return pts;
 }
-function generateHeartPoints(cx, cy, size){
+function generateHeartPoints(cx,cy,size){
   let pts=[];
   for(let t=0;t<Math.PI*2;t+=0.04){
     let x=16*Math.pow(Math.sin(t),3);
@@ -254,34 +211,41 @@ function generateHeartPoints(cx, cy, size){
 }
 
 const centerX=canvas.width/2, centerY=canvas.height/2;
-let textPoints = generateTextPoints("Дашуля", centerX, centerY);
+let textPoints=generateTextPoints("Дашуля",centerX,centerY);
 let pulse=0, heartBaseSize=12, currentHeartColor="pink";
 function getHeartPointsWithPulse(){
-  let scale = heartBaseSize + Math.sin(pulse)*2;
-  return generateHeartPoints(centerX, centerY, scale);
+  let scale=heartBaseSize+Math.sin(pulse)*2;
+  return generateHeartPoints(centerX,centerY,scale);
 }
-let heartPoints = getHeartPointsWithPulse();
-let allPoints = textPoints.concat(heartPoints);
-for(let i=0;i<500;i++){ allPoints.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height}); }
-let particles = allPoints.map(p=>new Particle(p));
+let heartPoints=getHeartPointsWithPulse();
+let allPoints=textPoints.concat(heartPoints);
+for(let i=0;i<500;i++) allPoints.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+let particles=allPoints.map(p=>new Particle(p));
 
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  pulse += 0.08; 
-  heartPoints = getHeartPointsWithPulse();
+  pulse+=0.08;
+  heartPoints=getHeartPointsWithPulse();
   for(let i=0;i<heartPoints.length;i++){
-    particles[textPoints.length+i].tx = heartPoints[i].x;
-    particles[textPoints.length+i].ty = heartPoints[i].y;
+    particles[textPoints.length+i].tx=heartPoints[i].x;
+    particles[textPoints.length+i].ty=heartPoints[i].y;
   }
-  let t = (Math.sin(pulse)+1)/2;
-  let r=255, g=Math.round(105+20*(1-t)), b=Math.round(180*(1-t));
+  let t=(Math.sin(pulse)+1)/2;
+  let r=255,g=Math.round(105+20*(1-t)),b=Math.round(180*(1-t));
   currentHeartColor=`rgb(${r},${g},${b})`;
   particles.forEach(p=>{p.update();p.draw();});
-  rows.forEach(r=>{r.offset-=1; if(r.offset<=-PHOTOS.length*200) r.offset=0; r.inner.style.top=r.offset+'px';});
+  
+  // --- Бесконечная прокрутка ---
+  rows.forEach(r=>{
+    r.offset-=1;
+    if(r.offset<=-PHOTOS.length*200) r.offset=0;
+    r.inner.style.top=r.offset+'px';
+  });
+  
   requestAnimationFrame(animate);
 }
 
-// Управление
+// --- Управление ---
 ["mousedown","touchstart"].forEach(ev=>{
   canvas.addEventListener(ev,e=>{
     if(ev==="mousedown"){ pointerX=e.clientX; pointerY=e.clientY; }
@@ -304,7 +268,7 @@ function animate(){
 });
 toggle.onclick=()=>{ if(music.paused){music.play(); toggle.textContent='🔊';} else{music.pause(); toggle.textContent='🔇';} };
 
-// --- Запуск только после нажатия кнопки ---
+// --- Запуск только после кнопки ---
 document.getElementById("start-btn").onclick=()=>{
   document.getElementById("start-screen").style.display="none";
   animate();
