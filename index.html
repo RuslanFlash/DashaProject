@@ -10,7 +10,7 @@
   body, html { margin: 0; padding: 0; overflow: hidden; height: 100%; background: black; }
   canvas { position: absolute; top: 0; left: 0; z-index: 3; width: 100vw; height: 100vh; }
   .carousel-row { 
-    width: 180px; max-width: 25vw; height: auto; overflow: hidden; margin-bottom: 15px;
+    width: 110px; max-width: 25vw; height: auto; overflow: hidden; margin-bottom: 15px;
   }
   .carousel-inner { position: relative; }
   .carousel-inner img { width: 100%; height: auto; object-fit: cover; display: block; margin-bottom: 5px; }
@@ -40,8 +40,8 @@
     font-weight: bold;
   }
   @keyframes moveRight {
-    from { transform: translateX(50%); }
-    to   { transform: translateX(150vw); }
+    from { transform: translateX(-10%); }
+    to   { transform: translateX(50vw); }
   }
 </style>
 </head>
@@ -135,7 +135,7 @@ function spawnCompliment(){
   document.body.appendChild(div);
   setTimeout(()=>div.remove(), 25000);
 }
-setInterval(spawnCompliment, 3000); // каждые 5 секунд новый
+setInterval(spawnCompliment, 5000); // каждые 5 секунд новый
 
 // --- Слайд-шоу ---
 const PHOTOS = [];
