@@ -165,7 +165,7 @@ function generateTextPoints(text, centerX, centerY){
   let c=document.createElement('canvas');
   let cx=c.getContext('2d');
   c.width=900;c.height=200;
-  cx.font='bold 150px Arial';
+  cx.font='bold 80px Arial';
   cx.fillStyle='white';
   cx.fillText(text,0,150);
   let data = cx.getImageData(0,0,c.width,c.height).data;
@@ -173,7 +173,7 @@ function generateTextPoints(text, centerX, centerY){
   for(let y=0;y<c.height;y+=5){ 
     for(let x=0;x<c.width;x+=5){ 
       let idx=(y*c.width+x)*4; 
-      if(data[idx+3]>128) points.push({x:x+canvas.width/2-300,y:y+canvas.height/2-50});
+      if(data[idx+3]>128) points.push({x:x+canvas.width/2-150,y:y+canvas.height/2-100});
     }
   }
   return points;
@@ -192,7 +192,7 @@ function generateHeartPoints(centerX, centerY, size){
 const centerX = canvas.width/2;
 const centerY = canvas.height/2;
 let textPoints = generateTextPoints("Дашуля", centerX, centerY);
-let heartPoints = generateHeartPoints(centerX, centerY, 20);
+let heartPoints = generateHeartPoints(centerX, centerY, 12);
 let allPoints = textPoints.concat(heartPoints);
 for(let i=0;i<500;i++){ allPoints.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});}
 let particles = allPoints.map(p=>new Particle(p));
