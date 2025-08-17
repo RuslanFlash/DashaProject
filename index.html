@@ -34,15 +34,15 @@
 
   /* Комплименты */
   .compliment {
-    position: absolute; white-space: nowrap; font-size: 10px; color: #ffb6c1;
-    animation: moveRight 20s linear infinite;
+    position: absolute; white-space: nowrap; font-size: 15px; color: #ffb6c1;
+    animation: moveLeft 20s linear infinite;
     text-shadow: 0 0 10px rgba(255,100,150,0.8);
     font-weight: bold;
   }
-  @keyframes moveRight {
-    from { transform: translateX(-10%); }
-    to   { transform: translateX(150vw); }
-  }
+  @keyframes moveLeft {
+  from { transform: translateX(180%); }  /* начинаем за правым краем */
+  to   { transform: translateX(-10%); }  /* заканчиваем за левым краем */
+}
 </style>
 </head>
 <body>
