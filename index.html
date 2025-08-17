@@ -127,7 +127,6 @@ class Particle {
     } else if(started){
       this.x += (this.tx - this.x)*0.06 + (Math.random()-0.5)*1;
       this.y += (this.ty - this.y)*0.06 + (Math.random()-0.5)*1;
-
     } else {
       this.x += this.vx;
       this.y += this.vy;
@@ -156,7 +155,7 @@ class Particle {
     if(this.y<0||this.y>canvas.height) this.vy*=-1;
   }
   draw(){
-    drawHeart(this.x, this.y, 4, "pink");
+    drawHeart(this.x, this.y, 4, currentHeartColor);
   }
 }
 
@@ -192,19 +191,55 @@ function generateHeartPoints(centerX, centerY, size){
 const centerX = canvas.width/2;
 const centerY = canvas.height/2;
 let textPoints = generateTextPoints("Дашуля", centerX, centerY);
-let heartPoints = generateHeartPoints(centerX, centerY, 12);
+
+// Переменные для пульсации и цвета
+let pulse = 0;
+let heartBaseSize = 12;
+let currentHeartColor = "pink";
+
+function getHeartPointsWithPulse(){
+  let scale = heartBaseSize + Math.sin(pulse) * 2; 
+  return generateHeartPoints(centerX, centerY, scale);
+}
+
+// генерим изначально
+let heartPoints = getHeartPointsWithPulse();
 let allPoints = textPoints.concat(heartPoints);
-for(let i=0;i<500;i++){ allPoints.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});}
+
+// добавляем случайные точки
+for(let i=0;i<500;i++){ 
+  allPoints.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+}
 let particles = allPoints.map(p=>new Particle(p));
 
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // обновляем пульс
+  pulse += 0.08; 
+  heartPoints = getHeartPointsWithPulse();
+
+  // обновляем target у частиц, которые относятся к сердцу
+  for(let i=0;i<heartPoints.length;i++){
+    particles[textPoints.length + i].tx = heartPoints[i].x;
+    particles[textPoints.length + i].ty = heartPoints[i].y;
+  }
+
+  // плавный переход цвета от розового к красному
+  let t = (Math.sin(pulse)+1)/2; // от 0 до 1
+  let r = 255;
+  let g = Math.round(105 + (20 * (1-t))); // от 125 до 105
+  let b = Math.round(180 * (1-t));        // от 180 до 0
+  currentHeartColor = `rgb(${r},${g},${b})`;
+
   particles.forEach(p=>{p.update();p.draw();});
+
   rows.forEach(rowObj=>{
-    rowObj.offset -= 5;
+    rowObj.offset -= 1;
     if(rowObj.offset <= -PHOTOS.length*200) rowObj.offset = 0;
     rowObj.inner.style.top = rowObj.offset + 'px';
   });
+
   requestAnimationFrame(animate);
 }
 animate();
