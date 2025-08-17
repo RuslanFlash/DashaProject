@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Для Даши 💖</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+  body, html { margin: 0; padding: 0; overflow: hidden; height: 100%; background: black; }
+  canvas { position: absolute; top: 0; left: 0; z-index: 3; width: 100vw; height: 100vh; }
+  .carousel-row { 
+    width: 180px;           
+    max-width: 25vw;        
+    height: auto; 
+    overflow: hidden; 
+    margin-bottom: 15px;
+  }
+  .carousel-inner { position: relative; }
+  .carousel-inner img { 
+    width: 100%; 
+    height: auto; 
+    object-fit: cover; 
+    display: block; 
+    margin-bottom: 5px;
+  }
+  #music-toggle { 
+    position: absolute; 
+    bottom: 20px; 
+    right: 20px; 
+    z-index: 10; 
+    background: rgba(255,255,255,0.7); 
+    border: none; 
+    padding: 10px 15px; 
+    border-radius: 10px; 
+    font-size: 18px; 
+    cursor: pointer; 
+    display: none; 
+  }
+</style>
+</head>
+<body>
+<div class="d-flex justify-content-between position-absolute w-100" style="top:5vh; z-index:1; padding: 0 30px;">
+  <div id="carousel-container-left"></div>
+  <div id="carousel-container-right"></div>
+</div>
+
+<canvas id="canvas"></canvas>
+<audio id="bg-music" loop>
+  <source src="https://raw.githubusercontent.com/RuslanFlash/DashaProject/main/img/music.mp3" type="audio/mpeg">
+</audio>
+<button id="music-toggle">🔊</button>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const toggle = document.getElementById("music-toggle");
+const music = document.getElementById("bg-music");
+
+const PHOTOS = [];
+for(let i=1;i<=20;i++){
+  PHOTOS.push(`https://raw.githubusercontent.com/RuslanFlash/DashaProject/main/img/${i}.jpg`);
+}
+
+let started = false;
+let particleFactor = 15;
+
+const containers = [
+  document.getElementById("carousel-container-left"),
+  document.getElementById("carousel-container-right")
+];
+containers.forEach(c=>c.style.display='none');
+
+let rows = [];
+containers.forEach(container=>{
+  for(let i=0;i<3;i++){
+    let row = document.createElement('div');
+    row.className='carousel-row';
+    let inner = document.createElement('div');
+    inner.className='carousel-inner';
+    PHOTOS.forEach(url=>{
+      let img = document.createElement('img');
+      img.src = url;
+      inner.appendChild(img);
+    });
+    row.appendChild(inner);
+    container.appendChild(row);
+    rows.push({container: row, inner: inner, offset:0});
+  }
+});
+
+// Функция рисования сердечка
+function drawHeart(x, y, size, color){
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.bezierCurveTo(x, y - size/2, x - size, y - size/2, x - size, y);
+  ctx.bezierCurveTo(x - size, y + size/2, x, y + size/1.5, x, y + size);
+  ctx.bezierCurveTo(x, y + size/1.5, x + size, y + size/2, x + size, y);
+  ctx.bezierCurveTo(x + size, y - size/2, x, y - size/2, x, y);
+  ctx.fill();
+}
+
+// Глобальные координаты курсора/пальца
+let pointerX = 0;
+let pointerY = 0;
+
+// Частицы
+class Particle {
+  constructor(target){
+    this.startX = Math.random()*canvas.width;
+    this.startY = Math.random()*canvas.height;
+    this.x = this.startX;
+    this.y = this.startY;
+    this.tx = target.x;
+    this.ty = target.y;
+    this.vx = (Math.random()-0.5)*2;
+    this.vy = (Math.random()-0.5)*2;
+    this.isExploding = false;
+  }
+  update(){
+    if(this.isExploding){
+      this.updateAroundPoint(pointerX, pointerY);
+    } else if(started){
+      this.x += (this.tx - this.x)*0.06 + (Math.random()-0.5)*1;
+      this.y += (this.ty - this.y)*0.06 + (Math.random()-0.5)*1;
+
+    } else {
+      this.x += this.vx;
+      this.y += this.vy;
+      if(this.x<0||this.x>canvas.width) this.vx*=-1;
+      if(this.y<0||this.y>canvas.height) this.vy*=-1;
+    }
+  }
+  updateAroundPoint(px, py){
+    let dx = this.x - px;
+    let dy = this.y - py;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    let radius = 100;
+    if(dist < radius){
+      let factor = 0.05;
+      let maxSpeed = 3;
+      this.vx += -dx*factor + (Math.random()-0.5);
+      this.vy += -dy*factor + (Math.random()-0.5);
+      if(this.vx > maxSpeed) this.vx = maxSpeed;
+      if(this.vx < -maxSpeed) this.vx = -maxSpeed;
+      if(this.vy > maxSpeed) this.vy = maxSpeed;
+      if(this.vy < -maxSpeed) this.vy = -maxSpeed;
+    }
+    this.x += this.vx;
+    this.y += this.vy;
+    if(this.x<0||this.x>canvas.width) this.vx*=-1;
+    if(this.y<0||this.y>canvas.height) this.vy*=-1;
+  }
+  draw(){
+    drawHeart(this.x, this.y, 4, "pink");
+  }
+}
+
+// Точки текста и сердца
+function generateTextPoints(text, centerX, centerY){
+  let c=document.createElement('canvas');
+  let cx=c.getContext('2d');
+  c.width=900;c.height=200;
+  cx.font='bold 150px Arial';
+  cx.fillStyle='white';
+  cx.fillText(text,0,150);
+  let data = cx.getImageData(0,0,c.width,c.height).data;
+  let points=[];
+  for(let y=0;y<c.height;y+=5){ 
+    for(let x=0;x<c.width;x+=5){ 
+      let idx=(y*c.width+x)*4; 
+      if(data[idx+3]>128) points.push({x:x+canvas.width/2-300,y:y+canvas.height/2-50});
+    }
+  }
+  return points;
+}
+
+function generateHeartPoints(centerX, centerY, size){
+  let points=[];
+  for(let t=0;t<Math.PI*2;t+=0.04){
+    let x=16*Math.pow(Math.sin(t),3);
+    let y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+    points.push({x:centerX+x*size,y:centerY-y*size});
+  }
+  return points;
+}
+
+const centerX = canvas.width/2;
+const centerY = canvas.height/2;
+let textPoints = generateTextPoints("Дашуля", centerX, centerY);
+let heartPoints = generateHeartPoints(centerX, centerY, 20);
+let allPoints = textPoints.concat(heartPoints);
+for(let i=0;i<500;i++){ allPoints.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});}
+let particles = allPoints.map(p=>new Particle(p));
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw();});
+  rows.forEach(rowObj=>{
+    rowObj.offset -= 5;
+    if(rowObj.offset <= -PHOTOS.length*200) rowObj.offset = 0;
+    rowObj.inner.style.top = rowObj.offset + 'px';
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+// Управление курсором и пальцем
+canvas.addEventListener('mousedown', e=>{
+  pointerX = e.clientX;
+  pointerY = e.clientY;
+  if(!started){
+    started=true;
+    music.play();
+    setTimeout(()=>{ containers.forEach(c=>c.style.display='block'); toggle.style.display='block'; },2000);
+  }
+  particles.forEach(p=>p.isExploding=true);
+});
+
+canvas.addEventListener('mousemove', e=>{
+  pointerX = e.clientX;
+  pointerY = e.clientY;
+});
+
+canvas.addEventListener('mouseup', ()=>{ particles.forEach(p=>p.isExploding=false); });
+
+canvas.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  const t = e.touches[0];
+  pointerX = t.clientX;
+  pointerY = t.clientY;
+  if(!started){
+    started=true;
+    music.play();
+    setTimeout(()=>{ containers.forEach(c=>c.style.display='block'); toggle.style.display='block'; },2000);
+  }
+  particles.forEach(p=>p.isExploding=true);
+}, {passive:false});
+
+canvas.addEventListener('touchmove', e=>{
+  const t = e.touches[0];
+  pointerX = t.clientX;
+  pointerY = t.clientY;
+}, {passive:false});
+
+canvas.addEventListener('touchend', ()=>{ particles.forEach(p=>p.isExploding=false); });
+
+toggle.onclick=()=>{
+  if(music.paused){music.play(); toggle.textContent='🔊';}
+  else{music.pause(); toggle.textContent='🔇';}
+};
+</script>
+</body>
+</html>
